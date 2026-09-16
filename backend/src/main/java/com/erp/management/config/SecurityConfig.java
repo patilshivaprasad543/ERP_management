@@ -1,17 +1,19 @@
 package com.erp.management.config;
 
 import com.erp.management.auth.CustomUserDetailsService;
+import com.erp.management.auth.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -19,13 +21,14 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
         return http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .userDetailsService(userDetailsService)
+            .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/login", "/actuator/health").permitAll()
                 .requestMatchers("/api/auth/users").hasAnyRole("SUPER_ADMIN", "ADMIN")
@@ -34,7 +37,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/finance/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "FINANCE")
                 .requestMatchers("/api/procurement/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "PROCUREMENT")
                 .anyRequest().authenticated())
-            .httpBasic(basic -> {})
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .httpBasic(basic -> basic.disable())
+            .formLogin(form -> form.disable())
             .build();
     }
 
