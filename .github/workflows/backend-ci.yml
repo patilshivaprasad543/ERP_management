@@ -40,5 +40,5 @@ jobs:
           DB_URL: jdbc:postgresql://localhost:5432/erp_management
           DB_USERNAME: postgres
           DB_PASSWORD: postgres
-          JWT_SECRET: VGhpc0lzQVN1ZmZpY2llbnRseUxvbmdTZWNyZXRLZXlGb3JEZXZlbG9wbWVudE9ubHk=
+          JWT_SECRET: ${{ secrets.ERP_JWT_TEST_SECRET }}
         run: mvn -B test
