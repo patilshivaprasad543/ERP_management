@@ -25,5 +25,9 @@ management:
 app:
   security:
     jwt:
-      secret: ${JWT_SECRET:VGhpc0lzQVN1ZmZpY2llbnRseUxvbmdTZWNyZXRLZXlGb3JEZXZlbG9wbWVudE9ubHk=}
+      secret: ${JWT_SECRET}
       expiration-ms: ${JWT_EXPIRATION_MS:900000}
+    bootstrap:
+      enabled: ${ERP_BOOTSTRAP_ADMIN_ENABLED:false}
+      username: ${ERP_BOOTSTRAP_ADMIN_USERNAME:}
+      password: ${ERP_BOOTSTRAP_ADMIN_PASSWORD:}
