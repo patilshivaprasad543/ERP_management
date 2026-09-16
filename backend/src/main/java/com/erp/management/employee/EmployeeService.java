@@ -21,9 +21,8 @@ public class EmployeeService {
     public Employee create(EmployeeRequest request) {
         if (employees.findByEmployeeCodeIgnoreCase(request.employeeCode()).isPresent())
             throw new IllegalArgumentException("Employee code already exists");
-        if (employees.findById(request.departmentId()).isEmpty())
-            throw new IllegalArgumentException("Department not found");
-        Department department = departments.findById(request.departmentId()).orElseThrow();
+        Department department = departments.findById(request.departmentId())
+                .orElseThrow(() -> new IllegalArgumentException("Department not found"));
         Employee employee = Employee.builder()
                 .employeeCode(request.employeeCode())
                 .firstName(request.firstName())
