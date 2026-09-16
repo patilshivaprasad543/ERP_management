@@ -1,0 +1,24 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: erp-management
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/erp_management}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
