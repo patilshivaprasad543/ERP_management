@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: erp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: erp_management
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - erp_pgdata:/var/lib/postgresql/data
+volumes:
+  erp_pgdata:
