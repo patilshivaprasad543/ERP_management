@@ -22,3 +22,8 @@ management:
     web:
       exposure:
         include: health,info
+app:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:VGhpc0lzQVN1ZmZpY2llbnRseUxvbmdTZWNyZXRLZXlGb3JEZXZlbG9wbWVudE9ubHk=}
+      expiration-ms: ${JWT_EXPIRATION_MS:900000}
