@@ -1,5 +1,6 @@
 package com.erp.management.inventory;
 
+import com.erp.management.finance.VendorPayableService;
 import com.erp.management.procurement.PurchaseOrder;
 import com.erp.management.procurement.PurchaseOrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.List;
 public class InventoryService {
     private final InventoryRepository inventory;
     private final PurchaseOrderRepository orders;
+    private final VendorPayableService payables;
 
     public List<InventoryItem> all() { return inventory.findAll(); }
 
@@ -48,9 +50,10 @@ public class InventoryService {
             item.setQuantityOnHand(newQty);
             item.setUnitCost(weightedCost);
         }
-        PurchaseOrder.PurchaseOrderStatus received = PurchaseOrder.PurchaseOrderStatus.RECEIVED;
-        order.setStatus(received);
+        order.setStatus(PurchaseOrder.PurchaseOrderStatus.RECEIVED);
         orders.save(order);
-        return inventory.save(item);
+        InventoryItem saved = inventory.save(item);
+        payables.createForReceivedOrder(order.getId());
+        return saved;
     }
 }
