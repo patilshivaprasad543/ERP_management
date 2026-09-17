@@ -1,37 +1,13 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ERP Management</title>
-  <link rel="stylesheet" href="./style.css" />
-</head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>ERP Management</title><link rel="stylesheet" href="./style.css"></head>
 <body>
-  <aside class="sidebar">
-    <h1>ERP<span>360</span></h1>
-    <nav>
-      <a class="active" href="#dashboard">Dashboard</a>
-      <a href="#employees">Employees</a>
-      <a href="#departments">Departments</a>
-      <a href="#attendance">Attendance</a>
-      <a href="#leave">Leave</a>
-      <a href="#expenses">Expenses</a>
-      <a href="#procurement">Procurement</a>
-      <a href="#inventory">Inventory</a>
-      <a href="#reports">Reports</a>
-    </nav>
-  </aside>
-  <main>
-    <header><div><p class="eyebrow">Enterprise Resource Planning</p><h2>Operations Dashboard</h2></div><button id="refresh">Refresh</button></header>
-    <section class="cards">
-      <article><small>Employees</small><strong id="employeeCount">—</strong><span>Live from API</span></article>
-      <article><small>Departments</small><strong id="departmentCount">—</strong><span>Active structure</span></article>
-      <article><small>Attendance</small><strong>98%</strong><span>Today's placeholder KPI</span></article>
-      <article><small>Pending approvals</small><strong>12</strong><span>Workflow queue</span></article>
-    </section>
-    <section class="panel" id="employees"><div class="panel-head"><h3>Employees</h3><button id="loadEmployees">Load employees</button></div><div id="employeeTable" class="table-wrap">Connect the backend to view employees.</div></section>
-    <section class="panel"><div class="panel-head"><h3>ERP roadmap</h3></div><div class="roadmap"><span>✓ Core foundation</span><span>→ HR & Attendance</span><span>→ Finance</span><span>→ Procurement</span><span>→ Inventory</span><span>→ Analytics & AI</span></div></section>
-  </main>
-  <script src="./app.js"></script>
-</body>
-</html>
+<section id="loginView" class="login-view"><div class="login-card"><h1>ERP<span>360</span></h1><p>Secure enterprise operations</p><form id="loginForm"><input id="username" placeholder="Username" autocomplete="username" required><input id="password" type="password" placeholder="Password" autocomplete="current-password" required><button>Sign in</button><small id="loginMessage"></small></form></div></section>
+<div id="appView" class="app-view hidden"><aside class="sidebar"><h1>ERP<span>360</span></h1><nav><a class="active" href="#dashboard">Dashboard</a><a href="#employees">Employees</a><a href="#attendance">Attendance</a><a href="#leave">Leave</a><a href="#expenses">Expenses</a><a href="#procurement">Procurement</a><a href="#inventory">Inventory</a><a href="#reports">Reports</a></nav></aside>
+<main><header><div><p class="eyebrow">Enterprise Resource Planning</p><h2>Operations Dashboard</h2><span id="sessionUser"></span></div><button id="logout">Sign out</button></header>
+<section class="cards"><article><small>Employees</small><strong id="employeeCount">—</strong><span>Live from API</span></article><article><small>Departments</small><strong id="departmentCount">—</strong><span>Active structure</span></article><article><small>Inventory items</small><strong id="inventoryCount">—</strong><span>Stock master</span></article><article><small>Open purchase requests</small><strong id="pendingRequests">—</strong><span>Approval queue</span></article></section>
+<section class="panel" id="employees"><div class="panel-head"><h3>Employees</h3><button id="loadEmployees">Refresh</button></div><div id="employeeTable" class="table-wrap">Loading…</div></section>
+<section class="panel" id="procurement"><div class="panel-head"><h3>Procurement workflow</h3><button id="refreshProcurement">Refresh</button></div><div id="procurementTable" class="table-wrap">Loading purchase requests…</div></section>
+<section class="panel" id="inventory"><div class="panel-head"><h3>Inventory</h3><button id="refreshInventory">Refresh</button></div><div id="inventoryTable" class="table-wrap">Loading inventory…</div></section>
+<section class="panel" id="reports"><div class="panel-head"><h3>ERP roadmap</h3></div><div class="roadmap"><span>✓ Core foundation</span><span>✓ HR & Attendance</span><span>✓ Finance</span><span>✓ Procurement</span><span>✓ Inventory receiving</span><span>→ Analytics & AI</span></div></section>
+</main></div><script src="./app.js"></script></body></html>
