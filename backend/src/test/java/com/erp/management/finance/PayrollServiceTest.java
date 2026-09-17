@@ -1,5 +1,6 @@
 package com.erp.management.finance;
 
+import com.erp.management.employee.EmployeeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,14 +17,16 @@ import static org.mockito.Mockito.*;
 class PayrollServiceTest {
     @Mock
     private PayrollRepository payroll;
+    @Mock
+    private EmployeeRepository employees;
 
     @InjectMocks
     private PayrollService service;
 
     @Test
     void createCalculatesNetSalaryAndStartsAsDraft() {
+        when(employees.existsById(1L)).thenReturn(true);
         when(payroll.findByEmployeeIdAndPayrollMonth(1L, "2026-09")).thenReturn(Optional.empty());
-        PayrollRecord saved = PayrollRecord.builder().id(10L).build();
         when(payroll.save(any(PayrollRecord.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         PayrollRecord result = service.create(1L, "2026-09", new BigDecimal("50000.00"), new BigDecimal("7500.00"));
@@ -34,7 +37,18 @@ class PayrollServiceTest {
     }
 
     @Test
+    void rejectsUnknownEmployee() {
+        when(employees.existsById(99L)).thenReturn(false);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> service.create(99L, "2026-09", new BigDecimal("50000.00"), new BigDecimal("7500.00")));
+        verify(payroll, never()).save(any());
+    }
+
+    @Test
     void rejectsDeductionsAboveGross() {
+        when(employees.existsById(1L)).thenReturn(true);
+
         assertThrows(IllegalArgumentException.class,
                 () -> service.create(1L, "2026-09", new BigDecimal("50000.00"), new BigDecimal("50000.01")));
         verify(payroll, never()).save(any());
