@@ -37,9 +37,6 @@ public class PurchaseOrderController {
     @PatchMapping("/{id}/send")
     public PurchaseOrder send(@PathVariable @Positive Long id) { return service.send(id); }
 
-    @PatchMapping("/{id}/receive")
-    public PurchaseOrder receive(@PathVariable @Positive Long id) { return service.receive(id); }
-
     @PatchMapping("/{id}/cancel")
     public PurchaseOrder cancel(@PathVariable @Positive Long id) { return service.cancel(id); }
 
