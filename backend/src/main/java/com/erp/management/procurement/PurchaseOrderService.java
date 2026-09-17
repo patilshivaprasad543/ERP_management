@@ -54,7 +54,6 @@ public class PurchaseOrderService {
 
     @Transactional public PurchaseOrder approve(Long id) { return transition(id, PurchaseOrder.PurchaseOrderStatus.APPROVED); }
     @Transactional public PurchaseOrder send(Long id) { return transition(id, PurchaseOrder.PurchaseOrderStatus.SENT); }
-    @Transactional public PurchaseOrder receive(Long id) { return transition(id, PurchaseOrder.PurchaseOrderStatus.RECEIVED); }
     @Transactional public PurchaseOrder cancel(Long id) { return transition(id, PurchaseOrder.PurchaseOrderStatus.CANCELLED); }
 
     private PurchaseOrder transition(Long id, PurchaseOrder.PurchaseOrderStatus target) {
@@ -64,8 +63,7 @@ public class PurchaseOrderService {
         boolean allowed = switch (current) {
             case DRAFT -> target == PurchaseOrder.PurchaseOrderStatus.APPROVED || target == PurchaseOrder.PurchaseOrderStatus.CANCELLED;
             case APPROVED -> target == PurchaseOrder.PurchaseOrderStatus.SENT || target == PurchaseOrder.PurchaseOrderStatus.CANCELLED;
-            case SENT -> target == PurchaseOrder.PurchaseOrderStatus.RECEIVED || target == PurchaseOrder.PurchaseOrderStatus.CANCELLED;
-            case RECEIVED, CANCELLED -> false;
+            case SENT, RECEIVED, CANCELLED -> false;
         };
         if (!allowed) throw new IllegalArgumentException("Invalid purchase order status transition: " + current + " -> " + target);
         order.setStatus(target);
