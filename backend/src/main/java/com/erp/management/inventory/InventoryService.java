@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -15,6 +17,7 @@ import java.util.List;
 public class InventoryService {
     private final InventoryRepository inventory;
     private final PurchaseOrderRepository orders;
+    private final InventoryReceiptRepository receipts;
     private final VendorPayableService payables;
 
     public List<InventoryItem> all() { return inventory.findAll(); }
@@ -37,6 +40,10 @@ public class InventoryService {
         if (order.getStatus() != PurchaseOrder.PurchaseOrderStatus.SENT) {
             throw new IllegalArgumentException("Only sent purchase orders can be received");
         }
+        if (receipts.findByPurchaseOrderId(purchaseOrderId).isPresent()) {
+            throw new IllegalArgumentException("This purchase order has already been received");
+        }
+
         InventoryItem item = inventory.findBySkuIgnoreCase(sku).orElse(null);
         if (item == null) {
             item = InventoryItem.builder().sku(sku.trim()).name(name.trim()).unit(unit)
@@ -46,13 +53,22 @@ public class InventoryService {
             BigDecimal oldQty = item.getQuantityOnHand();
             BigDecimal newQty = oldQty.add(quantity);
             BigDecimal weightedCost = oldQty.signum() == 0 ? unitCost
-                    : oldQty.multiply(item.getUnitCost()).add(quantity.multiply(unitCost)).divide(newQty, 2, java.math.RoundingMode.HALF_UP);
+                    : oldQty.multiply(item.getUnitCost()).add(quantity.multiply(unitCost))
+                        .divide(newQty, 2, RoundingMode.HALF_UP);
             item.setQuantityOnHand(newQty);
             item.setUnitCost(weightedCost);
         }
+
         order.setStatus(PurchaseOrder.PurchaseOrderStatus.RECEIVED);
         orders.save(order);
         InventoryItem saved = inventory.save(item);
+        receipts.save(InventoryReceipt.builder()
+                .purchaseOrderId(order.getId())
+                .sku(sku.trim())
+                .quantity(quantity)
+                .unitCost(unitCost)
+                .receivedAt(LocalDateTime.now())
+                .build());
         payables.createForReceivedOrder(order.getId());
         return saved;
     }
