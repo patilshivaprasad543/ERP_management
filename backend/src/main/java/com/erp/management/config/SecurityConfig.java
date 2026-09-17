@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/users").hasAnyRole("SUPER_ADMIN", "ADMIN")
                 .requestMatchers("/api/admin/**").hasAnyRole("SUPER_ADMIN", "ADMIN")
                 .requestMatchers("/api/hr/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "HR")
-                .requestMatchers("/api/finance/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "FINANCE")
+                .requestMatchers("/api/finance/**", "/api/reports/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "FINANCE")
                 .requestMatchers("/api/procurement/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "PROCUREMENT")
                 .anyRequest().authenticated())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -65,11 +65,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:3000",
-                "http://localhost:5500",
-                "http://127.0.0.1:5500"
-        ));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5500", "http://127.0.0.1:5500"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         configuration.setExposedHeaders(List.of("Location"));
@@ -88,9 +84,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
-    }
+    AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception { return configuration.getAuthenticationManager(); }
 
     @Bean
     DaoAuthenticationProvider authenticationProvider() {
