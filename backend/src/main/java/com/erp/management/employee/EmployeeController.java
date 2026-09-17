@@ -18,7 +18,7 @@ public class EmployeeController {
     public List<Employee> all() { return service.findAll(); }
 
     @GetMapping("/{id}")
-    public Employee byId(@PathVariable Long id) { return service.findById(id); }
+    public Employee byId(@PathVariable @Positive Long id) { return service.findById(id); }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -31,8 +31,8 @@ public class EmployeeController {
             @NotBlank @Size(max = 30) String employeeCode,
             @NotBlank @Size(max = 80) String firstName,
             @NotBlank @Size(max = 80) String lastName,
-            @NotBlank @Email String email,
+            @NotBlank @Email @Size(max = 160) String email,
             @Size(max = 25) String phone,
-            @NotNull LocalDate joiningDate,
-            @NotNull Long departmentId) {}
+            @NotNull @PastOrPresent LocalDate joiningDate,
+            @NotNull @Positive Long departmentId) {}
 }
