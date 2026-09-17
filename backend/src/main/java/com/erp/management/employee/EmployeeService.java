@@ -3,6 +3,7 @@ package com.erp.management.employee;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -19,15 +20,17 @@ public class EmployeeService {
 
     @Transactional
     public Employee create(EmployeeRequest request) {
-        if (employees.findByEmployeeCodeIgnoreCase(request.employeeCode()).isPresent())
+        if (request.employeeCode() == null || request.employeeCode().isBlank()) throw new IllegalArgumentException("Employee code is required");
+        if (request.joiningDate() == null || request.joiningDate().isAfter(LocalDate.now())) throw new IllegalArgumentException("Joining date cannot be in the future");
+        if (employees.findByEmployeeCodeIgnoreCase(request.employeeCode().trim()).isPresent())
             throw new IllegalArgumentException("Employee code already exists");
         Department department = departments.findById(request.departmentId())
                 .orElseThrow(() -> new IllegalArgumentException("Department not found"));
         Employee employee = Employee.builder()
-                .employeeCode(request.employeeCode())
-                .firstName(request.firstName())
-                .lastName(request.lastName())
-                .email(request.email())
+                .employeeCode(request.employeeCode().trim())
+                .firstName(request.firstName().trim())
+                .lastName(request.lastName().trim())
+                .email(request.email().trim().toLowerCase())
                 .phone(request.phone())
                 .joiningDate(request.joiningDate())
                 .department(department)
@@ -37,6 +40,6 @@ public class EmployeeService {
     }
 
     public record EmployeeRequest(String employeeCode, String firstName, String lastName,
-                                  String email, String phone, java.time.LocalDate joiningDate,
+                                  String email, String phone, LocalDate joiningDate,
                                   Long departmentId) {}
 }
