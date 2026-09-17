@@ -1,42 +1,35 @@
-# Running the ERP backend in Eclipse
+# Running the complete ERP from Eclipse
+
+The project is configured so one Spring Boot process can serve both the REST API and the static ERP frontend.
 
 ## Requirements
-- Eclipse IDE for Enterprise Java and Web Developers (or Eclipse IDE with Maven support)
+- Eclipse IDE with Maven support (m2e)
 - JDK 21
-- Maven support (m2e)
-- PostgreSQL running locally
+- PostgreSQL
 
 ## Import
-1. Clone the repository.
-2. In Eclipse choose **File → Import → Maven → Existing Maven Projects**.
-3. Select the `backend` folder.
-4. Finish the import and allow Maven to download dependencies.
-5. In **Window → Preferences → Java → Installed JREs**, select a JDK 21 installation.
-6. Right-click the project → **Maven → Update Project**.
+Use **File → Import → Maven → Existing Maven Projects** and select the `backend` folder.
 
-The backend uses Java 21 and Spring Boot 3.5.5. Eclipse metadata is included for Java 21, while Maven remains the source of truth for dependencies.
+## Start the complete application
+1. Make sure PostgreSQL is running and the `erp_management` database exists.
+2. Right-click the Spring Boot application class and choose **Run As → Spring Boot App**.
+3. Use the `eclipse` profile for local development.
+4. Open **http://localhost:8080/** in a browser.
 
-## Database
-Create a PostgreSQL database named `erp_management`, or change the connection using environment variables:
-- `DB_URL`
-- `DB_USERNAME`
-- `DB_PASSWORD`
+Maven copies the top-level `frontend` directory into Spring Boot's static resources during `process-resources`. The frontend therefore runs from the same origin as `/api`, so no separate frontend server or CORS setup is required for the normal Eclipse workflow.
 
-## JWT
-Set `JWT_SECRET` before starting the application. The secret is intentionally not hard-coded in the project.
+## Local Eclipse profile
+The `eclipse` profile supplies local PostgreSQL defaults and a development admin bootstrap.
 
-For local development, an optional first-admin bootstrap can be enabled with:
-- `ERP_BOOTSTRAP_ADMIN_ENABLED=true`
-- `ERP_BOOTSTRAP_ADMIN_USERNAME=...`
-- `ERP_BOOTSTRAP_ADMIN_PASSWORD=...` (minimum 12 characters)
+Default development credentials:
+- Username: `admin`
+- Password: `ChangeMe12345!`
 
-Keep these values out of source control.
+These are development-only defaults. Do not use them for a shared or production deployment.
 
-## Run
-In Eclipse:
-**Run As → Spring Boot App** on the main `@SpringBootApplication` class.
+## Maven fallback
+From the `backend` directory:
+`mvn spring-boot:run -Dspring-boot.run.profiles=eclipse`
 
-The API listens on `http://localhost:8080` by default.
-
-## Frontend
-The `frontend` directory is a static web client. Serve it with a local static web server rather than opening `index.html` with `file://` if the browser blocks API requests due to CORS.
+## Editing frontend files
+Keep source files under the top-level `frontend` directory. After frontend changes, run **Maven → Update Project** and restart the application when necessary so the copied static resources are refreshed.
