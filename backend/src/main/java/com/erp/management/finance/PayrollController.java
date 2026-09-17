@@ -5,7 +5,6 @@ import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class PayrollController {
     }
 
     @PatchMapping("/{id}/status")
-    public PayrollRecord status(@PathVariable Long id, @Valid @RequestBody StatusRequest request) {
+    public PayrollRecord status(@PathVariable @Positive Long id, @Valid @RequestBody StatusRequest request) {
         return service.changeStatus(id, request.status());
     }
 
